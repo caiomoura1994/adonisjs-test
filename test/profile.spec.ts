@@ -6,6 +6,23 @@ import DeliveryPlace from 'App/Models/DeliveryPlace'
 import Address from 'App/Models/Address'
 
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
+const address = {
+  zipCode: '41710020',
+  publicPlace: 'Rua',
+  neighborhood: 'Boca do rio',
+  number: '619',
+  complement: 'Casa',
+  city: 'Salvador',
+  country: 'BA',
+} as Address
+const deliveryPlaces = [{ neighborhood: 'Boca do rio', value: 20.0 }] as DeliveryPlace[]
+const openingHours = [
+  {
+    dayOfWeek: 'sunday',
+    startHour: '18:00',
+    endHour: '24:00',
+  },
+] as OpeningHour[]
 
 test.group('Profile', (gp) => {
   gp.before(async () => {
@@ -17,24 +34,6 @@ test.group('Profile', (gp) => {
   })
 
   test('Should create new user with profile', async (assert) => {
-    const address = {
-      zipCode: '41710020',
-      publicPlace: 'Rua',
-      neighborhood: 'Boca do rio',
-      number: '619',
-      complement: 'Casa',
-      city: 'Salvador',
-      country: 'BA',
-    } as Address
-    const deliveryPlaces = [{ neighborhood: 'Boca do rio', value: 20.0 }] as DeliveryPlace[]
-    const openingHours = [
-      {
-        dayOfWeek: 'sunday',
-        startHour: '18:00',
-        endHour: '24:00',
-      },
-    ] as OpeningHour[]
-
     const { body } = await supertest(BASE_URL)
       .post('/profiles')
       .send({
@@ -50,7 +49,26 @@ test.group('Profile', (gp) => {
       })
       .expect(200)
     assert.exists(body)
-    assert.hasAnyKeys(body, ['id', 'user_id'])
+    assert.hasAnyKeys(body, ['id', 'user_id', 'slug'])
+    assert.equal(body.slug, 'o-militar')
+  })
+
+  test('Should return error 422 because of slug invalid', async (assert) => {
+    const { text } = await supertest(BASE_URL)
+      .post('/profiles')
+      .send({
+        email: 'caiobdmoura2@gmail.com',
+        password: 'Senhatest',
+        phoneNumber: '71988362338',
+        establishmentName: 'O militar',
+        taxDocument: '02308244599',
+        description: 'Descricao maior que 20 caracteres',
+        address,
+        deliveryPlaces,
+        openingHours,
+      })
+      .expect(422)
+    assert.equal('Slug já cadastrado', text)
   })
 
   test('should return 422 user already created', async () => {
@@ -77,5 +95,12 @@ test.group('Profile', (gp) => {
       .expect(200)
     assert.exists(body)
     assert.equal(body.phone_number, phoneNumber)
+  })
+
+  test('Should return profile by slug', async (assert) => {
+    const { body } = await supertest(BASE_URL).get('/profiles/o-militar').expect(200)
+    assert.exists(body)
+    assert.equal(body.id, 1)
+    assert.equal(body.slug, 'o-militar')
   })
 })

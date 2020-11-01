@@ -3,6 +3,7 @@ import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import Address from 'App/Models/Address'
 
+import slugify from 'slugify'
 import * as Yup from 'yup'
 
 const newProfileSchema = Yup.object().shape({
@@ -36,8 +37,14 @@ export default class ProfilesController {
 
     const addressEntyti = await Address.create(address)
 
+    const slug = slugify(profileData.establishmentName, { lower: true })
+
+    const profileWithSlug = await Profile.findBy('slug', slug)
+    if (profileWithSlug) return response.status(422).send('Slug já cadastrado')
+
     const profile = await Profile.create({
       ...profileData,
+      slug,
       userId: user.id,
       addressId: addressEntyti.id,
     })
@@ -51,7 +58,11 @@ export default class ProfilesController {
     return profile.serialize()
   }
 
-  public async show({}: HttpContextContract) {}
+  public async show({ params }: HttpContextContract) {
+    const { id } = params
+    const profile = await Profile.findBy('slug', id)
+    return profile?.serialize()
+  }
 
   public async edit({}: HttpContextContract) {}
 

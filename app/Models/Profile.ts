@@ -27,6 +27,9 @@ export default class Profile extends BaseModel {
 
   @column()
   public establishmentName: string
+  
+  @column()
+  public slug: string
 
   @column()
   public taxDocument: string
