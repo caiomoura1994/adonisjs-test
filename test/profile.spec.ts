@@ -68,4 +68,14 @@ test.group('Profile', (gp) => {
     assert.exists(body)
     assert.containsAllKeys(body, ['token', 'user_id', 'id'])
   })
+
+  test('Should update profile', async (assert) => {
+    const phoneNumber = '71876432'
+    const { body } = await supertest(BASE_URL)
+      .patch('/profiles/1/')
+      .send({ phoneNumber })
+      .expect(200)
+    assert.exists(body)
+    assert.equal(body.phone_number, phoneNumber)
+  })
 })

@@ -55,7 +55,12 @@ export default class ProfilesController {
 
   public async edit({}: HttpContextContract) {}
 
-  public async update({}: HttpContextContract) {}
+  public async update({ request, params }: HttpContextContract) {
+    const profileId = params.id
+    const profile = await Profile.find(profileId)
+    profile?.merge(request.all()).save()
+    return profile?.serialize()
+  }
 
   public async destroy({}: HttpContextContract) {}
 }
