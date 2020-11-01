@@ -23,7 +23,7 @@ export default class ProfilesController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const { email, password, address, ...profileData } = request.all()
+    const { email, password, address, deliveryPlaces, ...profileData } = request.all()
     const exists_old_user = await User.findBy('email', email)
     if (exists_old_user) return response.status(422).send('Usuário já cadastrado')
 
@@ -41,6 +41,8 @@ export default class ProfilesController {
       userId: user.id,
       addressId: addressEntyti.id,
     })
+
+    await profile.related('deliveryPlaces').createMany(deliveryPlaces)
 
     await profile.save()
     await user.save()

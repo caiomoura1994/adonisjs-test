@@ -34,6 +34,7 @@ test.group('Profile', (gp) => {
         taxDocument: '02308244550',
         description: 'Descricao maior que 20 caracteres',
         address,
+        deliveryPlaces: [{ neighborhood: 'Boca do rio', value: 20.0 }],
       })
       .expect(200)
     assert.exists(body)
