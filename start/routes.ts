@@ -26,4 +26,5 @@ Route.get('/', async () => {
 
 Route.resource('users', 'UsersController')
 Route.resource('profiles', 'ProfilesController')
+Route.get('profiles/slug/:slug', 'ProfilesController.findBySlug')
 Route.post('/login', 'AuthController.login')

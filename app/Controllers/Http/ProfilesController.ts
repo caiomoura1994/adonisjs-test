@@ -59,14 +59,26 @@ export default class ProfilesController {
   }
 
   public async show({ params }: HttpContextContract) {
-    const { id } = params
-    const profile = await Profile.findBy('slug', id)
+    const profileId = params.id
+    const profile = await Profile.find(profileId)
+    return profile?.serialize()
+  }
+
+  public async findBySlug({ params }: HttpContextContract) {
+    const { slug } = params
+    const profile = await Profile.findBy('slug', slug)
     return profile?.serialize()
   }
 
   public async edit({}: HttpContextContract) {}
 
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
+    const { slug } = request.only(['slug'])
+    if (slug) {
+      const profileWithSlug = await Profile.findBy('slug', slug)
+      if (profileWithSlug) return response.status(422).send('Slug já cadastrado')
+    }
+
     const profileId = params.id
     const profile = await Profile.find(profileId)
     profile?.merge(request.all()).save()
