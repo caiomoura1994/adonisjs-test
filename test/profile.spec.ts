@@ -14,6 +14,16 @@ test.group('Profile', (gp) => {
   })
 
   test('Should create new user with profile', async (assert) => {
+    const address = {
+      zipCode: '41710020',
+      publicPlace: 'Rua',
+      neighborhood: 'Boca do rio',
+      number: '619',
+      complement: 'Casa',
+      city: 'Salvador',
+      country: 'BA',
+    }
+
     const { body } = await supertest(BASE_URL)
       .post('/profiles')
       .send({
@@ -23,6 +33,7 @@ test.group('Profile', (gp) => {
         establishmentName: 'O militar',
         taxDocument: '02308244550',
         description: 'Descricao maior que 20 caracteres',
+        address,
       })
       .expect(200)
     assert.exists(body)

@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
+import Address from 'App/Models/Address'
 
 import * as Yup from 'yup'
 
@@ -22,7 +23,7 @@ export default class ProfilesController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const { email, password, ...profileData } = request.all()
+    const { email, password, address, ...profileData } = request.all()
     const exists_old_user = await User.findBy('email', email)
     if (exists_old_user) return response.status(422).send('Usuário já cadastrado')
 
@@ -33,9 +34,12 @@ export default class ProfilesController {
       password,
     })
 
+    const addressEntyti = await Address.create(address)
+
     const profile = await Profile.create({
       ...profileData,
       userId: user.id,
+      addressId: addressEntyti.id,
     })
 
     await profile.save()
