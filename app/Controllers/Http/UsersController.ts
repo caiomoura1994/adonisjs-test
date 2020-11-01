@@ -39,8 +39,8 @@ export default class UsersController {
   public async destroy({ params, response }: HttpContextContract) {
     try {
       const user = await User.findOrFail(params.id)
-      user.delete()
-      return { isDeleted: user.$isDeleted }
+      await user.delete()
+      return response.status(204)
     } catch (error) {
       if (error.code === 'E_ROW_NOT_FOUND')
         return response.status(404).send('Usuário não encontrado')

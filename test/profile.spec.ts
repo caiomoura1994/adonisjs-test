@@ -23,6 +23,7 @@ test.group('Profile', (gp) => {
       city: 'Salvador',
       country: 'BA',
     }
+    const deliveryPlaces = [{ neighborhood: 'Boca do rio', value: 20.0 }]
 
     const { body } = await supertest(BASE_URL)
       .post('/profiles')
@@ -34,7 +35,7 @@ test.group('Profile', (gp) => {
         taxDocument: '02308244550',
         description: 'Descricao maior que 20 caracteres',
         address,
-        deliveryPlaces: [{ neighborhood: 'Boca do rio', value: 20.0 }],
+        deliveryPlaces,
       })
       .expect(200)
     assert.exists(body)
