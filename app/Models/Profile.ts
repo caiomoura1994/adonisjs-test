@@ -5,7 +5,20 @@ export default class Profile extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
   public userId: number
+
+  @column()
+  public phoneNumber: string
+
+  @column()
+  public establishmentName: string
+
+  @column()
+  public taxDocument: string
+
+  @column()
+  public description: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
