@@ -1,6 +1,9 @@
 import test from 'japa'
 import supertest from 'supertest'
 import Database from '@ioc:Adonis/Lucid/Database'
+import OpeningHour from 'App/Models/OpeningHour'
+import DeliveryPlace from 'App/Models/DeliveryPlace'
+import Address from 'App/Models/Address'
 
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
@@ -22,20 +25,28 @@ test.group('Profile', (gp) => {
       complement: 'Casa',
       city: 'Salvador',
       country: 'BA',
-    }
-    const deliveryPlaces = [{ neighborhood: 'Boca do rio', value: 20.0 }]
+    } as Address
+    const deliveryPlaces = [{ neighborhood: 'Boca do rio', value: 20.0 }] as DeliveryPlace[]
+    const openingHours = [
+      {
+        dayOfWeek: 'sunday',
+        startHour: '18:00',
+        endHour: '24:00',
+      },
+    ] as OpeningHour[]
 
     const { body } = await supertest(BASE_URL)
       .post('/profiles')
       .send({
         email: 'caiobdmoura@gmail.com',
-        password: 'C410140311',
+        password: 'Senhatest',
         phoneNumber: '71988362338',
         establishmentName: 'O militar',
-        taxDocument: '02308244550',
+        taxDocument: '02308244599',
         description: 'Descricao maior que 20 caracteres',
         address,
         deliveryPlaces,
+        openingHours,
       })
       .expect(200)
     assert.exists(body)
@@ -51,7 +62,7 @@ test.group('Profile', (gp) => {
       .post('/login')
       .send({
         email: 'caiobdmoura@gmail.com',
-        password: 'C410140311',
+        password: 'Senhatest',
       })
       .expect(200)
     assert.exists(body)

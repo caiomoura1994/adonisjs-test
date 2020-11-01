@@ -6,12 +6,12 @@ import Address from 'App/Models/Address'
 import * as Yup from 'yup'
 
 const newProfileSchema = Yup.object().shape({
-  email: Yup.string().email().required('Obrigatório'),
-  password: Yup.string().required('Obrigatório'),
-  phoneNumber: Yup.string().required('Obrigatório'),
-  establishmentName: Yup.string().required('Obrigatório'),
-  taxDocument: Yup.string().required('Obrigatório'),
-  description: Yup.string().min(20).required('Obrigatório'),
+  email: Yup.string().email().required(),
+  password: Yup.string().required(),
+  phoneNumber: Yup.string().required(),
+  establishmentName: Yup.string().required(),
+  taxDocument: Yup.string().required(),
+  description: Yup.string().min(20).required(),
 })
 
 export default class ProfilesController {
@@ -23,7 +23,7 @@ export default class ProfilesController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const { email, password, address, deliveryPlaces, ...profileData } = request.all()
+    const { email, password, address, deliveryPlaces, openingHours, ...profileData } = request.all()
     const exists_old_user = await User.findBy('email', email)
     if (exists_old_user) return response.status(422).send('Usuário já cadastrado')
 
@@ -43,6 +43,7 @@ export default class ProfilesController {
     })
 
     await profile.related('deliveryPlaces').createMany(deliveryPlaces)
+    await profile.related('openingHours').createMany(openingHours)
 
     await profile.save()
     await user.save()

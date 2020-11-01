@@ -25,7 +25,7 @@ test.group('User Empity', (gp) => {
       .post('/users')
       .send({
         email: 'caiobdmoura@gmail.com',
-        password: 'C410140311',
+        password: 'Senhatest',
       })
       .expect(200)
     assert.exists(body)
@@ -36,7 +36,6 @@ test.group('User Empity', (gp) => {
     const { body } = await supertest(BASE_URL).get('/users').expect(200)
     assert.exists(body)
     assert.hasAllDeepKeys(body, ['meta', 'data'])
-    body.data
     assert.lengthOf(body.data, 1)
   })
 })

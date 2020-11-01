@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import DeliveryPlace from './DeliveryPlace'
+import OpeningHour from './OpeningHour'
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -8,6 +9,9 @@ export default class Profile extends BaseModel {
 
   @hasMany(() => DeliveryPlace)
   public deliveryPlaces: HasMany<typeof DeliveryPlace>
+
+  @hasMany(() => OpeningHour)
+  public openingHours: HasMany<typeof OpeningHour>
 
   @column()
   public canPickUpAtStore: boolean
