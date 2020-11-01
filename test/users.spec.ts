@@ -1,10 +1,18 @@
 import test from 'japa'
 import supertest from 'supertest'
-import User from 'App/Models/User'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
-test.group('User Empity', () => {
+test.group('User Empity', (gp) => {
+  gp.before(async () => {
+    await Database.beginGlobalTransaction()
+  })
+
+  gp.after(async () => {
+    await Database.rollbackGlobalTransaction()
+  })
+
   test('Should return users with pagination', async (assert) => {
     const { body } = await supertest(BASE_URL).get('/users').expect(200)
     assert.exists(body)
