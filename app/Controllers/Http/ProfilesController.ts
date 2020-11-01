@@ -1,5 +1,17 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Profile from 'App/Models/Profile'
+import User from 'App/Models/User'
+
+import * as Yup from 'yup'
+
+const newProfileSchema = Yup.object().shape({
+  email: Yup.string().email().required('Obrigatório'),
+  password: Yup.string().required('Obrigatório'),
+  phoneNumber: Yup.string().required('Obrigatório'),
+  establishmentName: Yup.string().required('Obrigatório'),
+  taxDocument: Yup.string().required('Obrigatório'),
+  description: Yup.string().min(20).required('Obrigatório'),
+})
 
 export default class ProfilesController {
   public async index({ request }: HttpContextContract) {
@@ -9,16 +21,27 @@ export default class ProfilesController {
     return users
   }
 
-  public async store({ request, response, auth }: HttpContextContract) {
-    await auth.authenticate()
-    const exists_old_user = await Profile.findBy('userId', auth?.user?.id)
-    if (exists_old_user?.id) {
-      return response.status(422).send('Usuário já cadastrado')
-    }
+  public async store({ request, response }: HttpContextContract) {
+    const { email, password, ...profileData } = request.all()
+    const exists_old_user = await User.findBy('email', email)
+    if (exists_old_user) return response.status(422).send('Usuário já cadastrado')
 
-    const user = await Profile.create(request.all())
+    await newProfileSchema.validate(request.all())
+
+    const user = await User.create({
+      email,
+      password,
+    })
+
+    const profile = await Profile.create({
+      ...profileData,
+      userId: user.id,
+    })
+
+    await profile.save()
     await user.save()
-    return user.serialize()
+
+    return profile.serialize()
   }
 
   public async show({}: HttpContextContract) {}
