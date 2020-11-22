@@ -98,7 +98,7 @@ test.group('Profile', (gp) => {
   })
 
   test('Should return profile by slug', async (assert) => {
-    const { body } = await supertest(BASE_URL).get('/profiles/o-militar').expect(200)
+    const { body } = await supertest(BASE_URL).get('/profiles/slug/o-militar').expect(200)
     assert.exists(body)
     assert.equal(body.id, 1)
     assert.equal(body.slug, 'o-militar')

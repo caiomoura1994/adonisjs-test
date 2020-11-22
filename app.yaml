@@ -1,0 +1,13 @@
+runtime: nodejs12
+
+env_variables: 
+    PORT: 8080
+    HOST: localhost
+    NODE_ENV: production
+    APP_KEY: hb7YKFVcHXV3cQQDNIH_512WHD_6_eRL
+    DB_CONNECTION: sqlite
+    PG_HOST: localhost
+    PG_PORT: 5432
+    PG_USER: lucid
+    PG_PASSWORD: 
+    PG_DB_NAME: lucid
